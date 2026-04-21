@@ -1,0 +1,6 @@
+python-telegram-bot
+yfinance
+schedule
+requests
+psycopg2-binary
+python-dotenv
