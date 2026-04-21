@@ -1110,3 +1110,82 @@ async def currency_alert_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"Condition: Rate {condition_text} ₹{target_price}\n\n"
         f"I will notify you when alert triggers! 🔔"
     )
+
+# Partial Payment Handle
+async def pay(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    
+    if len(context.args) < 3:
+        await update.message.reply_text(
+            "❌ Correct format:\n"
+            "/pay basic UTR AMOUNT\n\n"
+            "Example:\n"
+            "/pay basic 123456789 99\n"
+            "/pay basic 123456789 50"
+        )
+        return
+    
+    plan = context.args[0].lower()
+    utr = context.args[1]
+    paid_amount = float(context.args[2])  # ← User kitna bheja
+    
+    required_amount = PLANS[plan]['price']
+    remaining = required_amount - paid_amount
+    
+    conn = get_conn()
+    c = conn.cursor()
+    
+    # Pehle se koi pending payment hai check karo
+    c.execute(
+        '''SELECT SUM(amount) FROM payments 
+           WHERE user_id=%s AND plan=%s AND status=%s''',
+        (user_id, plan, 'pending')
+    )
+    already_paid = c.fetchone()[0] or 0
+    total_paid = already_paid + paid_amount
+    still_remaining = required_amount - total_paid
+    
+    # Save karo
+    c.execute(
+        'INSERT INTO payments (user_id, plan, amount, utr_number) VALUES (%s, %s, %s, %s)',
+        (user_id, plan, paid_amount, utr)
+    )
+    conn.commit()
+    conn.close()
+    
+    # Poora pay kiya?
+    if still_remaining <= 0:
+        await update.message.reply_text(
+            f"✅ Full Payment Received!\n\n"
+            f"Plan: {plan.upper()}\n"
+            f"Total Paid: ₹{total_paid:.0f}\n\n"
+            f"⏳ Will be activated in 30 min."
+        )
+    else:
+        await update.message.reply_text(
+            f"⚠️ Partial Payment Received!\n\n"
+            f"Plan: {plan.upper()} — ₹{required_amount}\n"
+            f"Paid so far: ₹{total_paid:.0f}\n"
+            f"Remaining: ₹{still_remaining:.0f}\n\n"
+            f"Please send the remaining amount\n"
+            f"and share the new UTR:\n"
+            f"/pay {plan} NEW_UTR {still_remaining:.0f}"
+        )
+    
+    # Admin ko notify karo
+    ADMIN_ID = 6144164934
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            f"💰 Payment Received!\n\n"
+            f"User ID: {user_id}\n"
+            f"Plan: {plan.upper()}\n"
+            f"This payment: ₹{paid_amount:.0f}\n"
+            f"Total paid: ₹{total_paid:.0f}\n"
+            f"Required: ₹{required_amount}\n"
+            f"Remaining: ₹{still_remaining:.0f}\n"
+            f"UTR: {utr}\n\n"
+            f"{'✅ FULL — Approve karo:' if still_remaining <= 0 else '⚠️ PARTIAL — Abhi approve mat karo'}\n"
+            f"/approve {user_id} {plan}"
+        )
+    )
