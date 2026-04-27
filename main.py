@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 from bot import (start, add_alert_start, get_symbol,
                  get_price_target, confirm_alert, my_alerts,
-                 delete_alert, upgrade, pay, approve_payment, my_id, stock_info, mood, check_earnings, portfolio, add_holding_cmd, remove_holding_cmd, weekly_report_cmd, watchlist_cmd, add_watch_cmd, remove_watch_cmd, buy_report_cmd, pay_report_cmd, approve_report_cmd, refer_cmd, use_referral_cmd, stats_cmd, commodity_cmd, commodity_alert_cmd, currency_cmd, currency_alert_cmd,
+                 delete_alert, upgrade, pay, approve_payment, my_id, stock_info, mood, check_earnings, portfolio, add_holding_cmd, remove_holding_cmd, weekly_report_cmd, watchlist_cmd, add_watch_cmd, remove_watch_cmd, buy_report_cmd, pay_report_cmd, approve_report_cmd, refer_cmd, use_referral_cmd, stats_cmd, commodity_cmd, commodity_alert_cmd, currency_cmd, currency_alert_cmd, feedback_cmd,
                  WAITING_SYMBOL, WAITING_PRICE, WAITING_CONDITION)
 
 from checker import check_and_send_alerts
@@ -116,6 +116,7 @@ def main():
     app.add_handler(CommandHandler('commodityalert', commodity_alert_cmd))
     app.add_handler(CommandHandler('currency', currency_cmd))
     app.add_handler(CommandHandler('currencyalert', currency_alert_cmd))
+    app.add_handler(CommandHandler('feedback', feedback_cmd))
     
     print("✅ Bot is running...")
     app.run_polling()
