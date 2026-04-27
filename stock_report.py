@@ -1,6 +1,7 @@
 # stock_report.py
 import yfinance as yf
 from datetime import datetime
+import pytz
 from database import get_conn
 
 def generate_report(symbol):
@@ -111,7 +112,7 @@ def generate_report(symbol):
             'dividend': dividend,
             'recommendation': recommendation,
             'risk': risk,
-            'generated_at': datetime.now().strftime('%d-%m-%Y %H:%M')
+            'generated_at': datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%d %B %Y %I:%M %p')
         }
         
     except Exception as e:

@@ -1,5 +1,6 @@
 # market_mood.py
 import yfinance as yf
+import pytz
 from datetime import datetime
 
 def get_market_mood():
@@ -69,6 +70,9 @@ def format_mood_message(data):
     """Format message for sending"""
     if not data:
         return None
+    # IST Time calculate karne ke liye
+    ist = pytz.timezone('Asia/Kolkata')
+    current_time = datetime.now(ist).strftime("%d %b %Y | %I:%M %p")
 
     nifty_sign = "+" if data['nifty_change'] >= 0 else ""
     banknifty_sign = "+" if data['banknifty_change'] >= 0 else ""
@@ -78,6 +82,7 @@ def format_mood_message(data):
 
     msg = (
         f"🌅 Good Morning! Today's Market Mood\n"
+        f"📅 {current_time}\n"  # Yaha Date aur Time display hoga
         f"━━━━━━━━━━━━━━━\n"
         f"{data['mood']}\n"
         f"{data['mood_msg']}\n\n"
