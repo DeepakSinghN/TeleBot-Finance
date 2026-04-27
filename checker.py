@@ -114,11 +114,11 @@ async def check_and_send_alerts():
                     )
                 )
             
-            # Deactivate alert
+           # Delete alert permanently
             c.execute(
-                'UPDATE alerts SET is_active=0 WHERE id=%s',
+                'DELETE FROM alerts WHERE id=%s',
                 (alert_id,)
-            )
+)
             
             # Save to alert history
             c.execute(
