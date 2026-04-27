@@ -81,6 +81,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "💎 Premium\n"
         "/upgrade — View plans\n"
         "/myid — Your Telegram ID"
+        "💬 Feedback\n"
+        "/feedback — Share your feedback\n\n"
     )
 
 # ─── Add Alert ───
@@ -1111,3 +1113,39 @@ async def currency_alert_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"I will notify you when alert triggers! 🔔"
     )
 
+# Feedback Form
+async def feedback_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    
+    if not context.args:
+        await update.message.reply_text(
+            "💬 We'd love to hear from you!\n\n"
+            "Send your feedback like this:\n"
+            "/feedback Your message here\n\n"
+            "Examples:\n"
+            "/feedback Add more stocks support\n"
+            "/feedback Love the gold alerts feature!\n"
+            "/feedback App is very easy to use"
+        )
+        return
+    
+    feedback_text = ' '.join(context.args)
+    
+    await update.message.reply_text(
+        "✅ Feedback Received!\n\n"
+        "Thank you for helping us improve StockSathi.\n"
+        "We read every feedback personally! 🙏"
+    )
+    
+    # Admin ko bhejo
+    ADMIN_ID = 6144164934
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            f"💬 New Feedback!\n\n"
+            f"User ID: {user_id}\n"
+            f"Name: {update.effective_user.first_name}\n"
+            f"Username: @{update.effective_user.username}\n\n"
+            f"Message:\n{feedback_text}"
+        )
+    )
