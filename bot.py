@@ -80,7 +80,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/usereferral — Use a referral code\n\n"
         "💎 Premium\n"
         "/upgrade — View plans\n"
-        "/myid — Your Telegram ID"
+        "/myid — Your Telegram ID\n\n"
         "💬 Feedback\n"
         "/feedback — Share your feedback\n\n"
     )
