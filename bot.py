@@ -82,7 +82,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/upgrade — View plans\n"
         "/myid — Your Telegram ID\n\n"
         "💬 Feedback\n"
-        "/feedback — Share your feedback here\n\n"
+        "/feedback — Share your feedback\n\n"
     )
 
 # ─── Add Alert ───
